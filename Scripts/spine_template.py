@@ -6,16 +6,17 @@ import nibabel as nib
 import numpy as np
 from multiprocessing import Pool
 
-def process_csa_spine(PSIR_file):
-    split_path = os.path.split(PSIR_file)
+def process_csa_spine(spine_file):
+    split_path = os.path.split(spine_file)
+    #Register
     #print(split_path[1])
     subj_id = split_path[1].split('_')[0]
     scan_id = split_path[1].split('_')[1]
     output_folder = os.path.join(split_path[0], 'PSIR', subj_id + '_' + scan_id)
-    
+
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    
+
     # Segment spine
     print("Starting segmenting spine " + split_path[1])
     command = ["sct_propseg",
@@ -88,15 +89,15 @@ def process_csa_spine(PSIR_file):
     print("Done " + split_path[1])
 
 if __name__ == '__main__':
-    
+
     os.environ["PATH"] += os.pathsep + os.path.join('/home/j/jiwonoh/jglaist1/.virtualenvs/smhms/bin/')
 
     path = "/home/j/jiwonoh/jglaist1/scratch/data/SpinalCord/*_PSIR.nii.gz"
     PSIR_files = sorted(glob.glob(path))
 
-    
+    #Average
+
     num_workers = 40
     pool = Pool(processes=num_workers)
     pool.map(process_csa_spine, PSIR_files[4:])
     pool.close()
-        
